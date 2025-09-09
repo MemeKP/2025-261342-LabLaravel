@@ -53,4 +53,33 @@ class UserController extends Controller
         // Step 5: Return the file response to the browser
         return response()->file($path);
     }
+    public function showBio()
+    {
+        $user = Auth::user(); // Retrieve the currently authenticated user
+        $bio = $user->bio; // Access the related bio for the user via function bio()
+        return view('profile.show-bio', compact('user', 'bio')); //Pass both user and bio data to the Blade view
+    }
+
+    public function updateBio(Request $request)
+{
+    $user = Auth::user();
+    $bio = $user->bio;
+
+    $request->validate([
+        'bio' => 'required|string',
+    ]);
+
+    if ($bio) {
+        $bio->update([
+            'bio' => $request->input('bio'),
+        ]);
+    } else {
+        $user->bio()->create([
+            'bio' => $request->input('bio'),
+        ]);
+    }
+
+    return redirect()->route('profile.show-bio')
+                    ->with('status', 'Bio updated successfully!');
+}
 }

@@ -16,6 +16,11 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('diary.index')" :active="request()->routeIs('diary.index')">
+                        {{ __('Diary') }}
+                    </x-nav-link>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
@@ -37,7 +42,15 @@
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
-
+                        <!-- Lab 2 media links -->
+                         <!-- <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('diary.index')" :active="request()->routeIs('diary.index')">
+                        {{ __('Diary') }}
+                    </x-nav-link>
+                </div> -->
+                         <x-dropdown-link :href="route('link.index')">
+                            {{ __('Links') }}
+                         </x-dropdown-link>
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

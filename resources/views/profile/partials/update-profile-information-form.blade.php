@@ -47,6 +47,18 @@
             @endif
         </div>
 
+         <h4 class="font-medium text-blue-900 mt-6 mb-6">
+     {{ __('Bio Information') }}
+ </h4>
+ <p class="mt-2 mb-6">
+     {{ $user->bio->bio ?? 'No bio available' }}
+ </p>
+ <a
+  href="{{ route('profile.show-bio') }}"
+  class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 active:bg-blue-700 focus:outline-none focus:border-blue-700 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150"
+>
+  {{ __('Click to Manage Bio') }}
+</a>
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

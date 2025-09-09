@@ -6,11 +6,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
+    public function bio(): HasOne
+{
+    return $this->hasOne(UserBio::class, 'user_id');
+}
 
     /**
      * The attributes that are mass assignable.
@@ -46,5 +52,17 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    // public function bio()
+    // {
+    //     return $this->hasOne(UserBio::class, 'user_id');
+    // }
+    public function diaryEntries()
+    {
+        return $this->hasMany(DiaryEntry::class);
+    }
+    public function linkEntries()
+    {
+        return $this->hasMany(LinkEntry::class);
     }
 }
