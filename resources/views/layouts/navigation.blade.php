@@ -21,6 +21,13 @@
                         {{ __('Diary') }}
                     </x-nav-link>
                 </div>
+                <!-- REMINDER -->
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <!-- reminder -->
+                    <x-nav-link :href="route('reminder.index')" :active="request()->routeIs('reminder.index')"> 
+                        {{ __('Reminders') }}
+                    </x-nav-link>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->

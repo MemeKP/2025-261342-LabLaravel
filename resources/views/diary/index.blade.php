@@ -21,6 +21,29 @@
                         <div class="mb-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
                             <h3 class="text-xl font-bold mb-2">{{ $entry->date->format('F j, Y') }}</h3>
                             <p class="text-gray-800 dark:text-gray-200">{{ $entry->content }}</p>
+                        <!-- Display emotions -->
+                         @if ($entry->emotions->isNotEmpty())
+                             <h4 class="text-lg font-semibold mb-1 mt-2">Emotions</h4>
+                             @foreach ($entry->emotions as $emotion)
+                                 <li>
+                                     {{ $emotion->name }} (Intensity: {{ $emotion->pivot->intensity }})
+                                 </li>
+                             @endforeach
+                         @endif
+
+                         <!-- Display tags -->
+                        @if ($entry->tags->isNotEmpty())
+                            <div class="mt-4">
+                                <h4 class="text-lg font-semibold mb-1">Tags</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach ($entry->tags as $tag)
+                                        <span
+                                            class="inline-block bg-blue-200 text-blue-800 text-sm px-2 py-1 rounded-full">{{ $tag->name }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
                             <div class="mt-4 flex justify-end">
                                 <x-primary-button style="margin-right: 10px;"
                                     onclick="window.location.href='{{ route('diary.edit', $entry) }}'">

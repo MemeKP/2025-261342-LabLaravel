@@ -41,6 +41,75 @@
                             @enderror
                         </div>
 
+                                                 {{-- Emotion --}}
+                         <div class="mb-4">
+                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select
+                                 Emotions</label>
+
+                             <!-- Grid layout for emotions -->
+                             <div class="grid grid-cols-1 gap-4">
+                                 @foreach ($emotions as $emotion)
+                                     <div class="flex items-center mb-4">
+                                         <!-- Checkbox and label container -->
+                                         <input type="checkbox" id="emotion_{{ $emotion->id }}" name="emotions[]"
+                                             value="{{ $emotion->id }}"
+                                             class="h-5 w-5 text-indigo-600 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-indigo-600"
+                                             onchange="toggleIntensityInput({{ $emotion->id }})">
+                                         <label for="emotion_{{ $emotion->id }}"
+                                             class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">{{ $emotion->name }}</label>
+
+                                         <!-- Intensity input container, initially hidden -->
+                                         <div class="ml-4 hidden" id="intensity_container_{{ $emotion->id }}">
+                                             <input type="number" name="intensity[{{ $emotion->id }}]"
+                                                 class="w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500"
+                                                 placeholder="Intensity" min="1" max="10">
+                                         </div>
+                                     </div>
+                                 @endforeach
+                             </div>
+
+                             @error('emotions')
+                                 <div class="text-red-500 text-sm mt-2">{{ $message }}</div>
+                             @enderror
+                         </div>
+                         <script>
+                             function toggleIntensityInput(emotionId) {
+                                 var checkbox = document.getElementById('emotion_' + emotionId);
+                                 var intensityContainer = document.getElementById('intensity_container_' + emotionId);
+                                 var intensityInput = intensityContainer.querySelector('input');
+
+                                 if (checkbox.checked) {
+                                     intensityContainer.classList.remove('hidden');
+                                     intensityInput.setAttribute('required', 'required');
+                                 } else {
+                                     intensityContainer.classList.add('hidden');
+                                     intensityInput.removeAttribute('required');
+                                     intensityInput.value = ''; // Clear intensity input if unchecked
+                                 }
+                             }
+                         </script>
+
+                         {{-- Tags --}}
+                        <div class="mb-4">
+                            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Tags</label>
+                                <div class="flex flex-wrap">
+                                    @foreach ($tags as $tag)
+                                        <div class="mr-4 mb-2">
+                                            <input type="checkbox" id="tag_{{ $tag->id }}" name="tags[]"
+                                                value="{{ $tag->id }}"
+                                                class="h-5 w-5 text-indigo-600 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-indigo-600">
+                                            <label for="tag_{{ $tag->id }}"
+                                                class="ml-3 text-sm font-medium text-gray-700 dark:text-gray-300">{{ $tag->name }}</label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                @error('tags')
+                                    <div class="text-red-500 text-sm mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">{{ __('Save Entry') }}</button>
 
                     </form>

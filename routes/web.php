@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DiaryEntryController;
+use App\Http\Controllers\ReminderController;
 use App\Http\Controllers\LinkEntryController;
 
 Route::get('/', function () {
@@ -23,6 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     // Route to handle social media links
     Route::resource('link', LinkEntryController::class);
+    // Route to handle reminder
+    Route::resource('reminder', ReminderController::class);
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile/photo/update', [UserController::class, 'updateProfilePhoto'])->name('profile.photo.update');

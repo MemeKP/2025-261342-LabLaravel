@@ -6,37 +6,65 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use App\Models\DiaryEntry;
+use App\Models\Tag;
+use App\Models\Emotion;
 
 class DiaryEntryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-{
-    $diaryEntries = Auth::user()->diaryEntries()->get();
-    return view('diary.index', compact('diaryEntries'));
-}
+  public function index()
+    {
+        $diaryEntries = Auth::user()->diaryEntries()
+        ->with('emotions', 'tags') // Eager load emotions and tags
+        ->orderBy('date', 'desc')
+        ->get();
+        return view('diary.index', compact('diaryEntries'));
+    }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+public function create()
 {
-    return view('diary.create');
+    $emotions = Emotion::all(); // Fetch all emotions for selection
+    $tags = Tag::all(); // Fetch all tags for selection
+    return view('diary.create', compact('emotions', 'tags')); // Pass emotions and tags to the view
 }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+public function store(Request $request)
 {
+    // Validate the request
     $validated = $request->validate([
         'date' => 'required|date',
         'content' => 'required|string',
+        'emotions' => 'array', // Validate emotions as an array
+        'intensity' => 'array', // Validate intensity as an array
+        'tags'      => ['nullable', 'array'],
+        'tags.*'    => ['integer', 'exists:tags,id'],
     ]);
 
-    Auth::user()->diaryEntries()->create($validated);
+    // Create the diary entry
+    // retrieves the currently authenticated user model
+    $diaryEntry = Auth::user()->diaryEntries()->create([
+        'date' => $validated['date'],
+        'content' => $validated['content'],
+    ]);
+    $diaryEntry->tags()->sync($validated['tags'] ?? []); //Attaches only valid tags from the tags table. If no tags were passed → uses [] (detaches all).
+
+    // Handle emotions and intensities
+    if (!empty($validated['emotions']) && !empty($validated['intensity'])) {
+        foreach ($validated['emotions'] as $emotionId) {
+            $intensity = $validated['intensity'][$emotionId] ?? null;
+
+            // Attach emotions and intensities to the diary entry
+            $diaryEntry->emotions()->attach($emotionId, ['intensity' => $intensity]);
+        }
+    }
 
     return redirect()->route('diary.index')->with('status', 'Diary entry added successfully!');
 }
@@ -44,19 +72,24 @@ class DiaryEntryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+public function show(string $id)
 {
-    $diaryEntry = Auth::user()->diaryEntries()->findOrFail($id);
+    $diaryEntry = Auth::user()
+        ->diaryEntries()
+        ->with('emotions') // eager load related emotions
+        ->findOrFail($id);
+
     return view('diary.show', compact('diaryEntry'));
 }
-
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+public function edit(string $id)
 {
-    $diaryEntry = Auth::user()->diaryEntries()->findOrFail($id);
-    return view('diary.edit', compact('diaryEntry'));
+    $diaryEntry = Auth::user()->diaryEntries()->with('emotions', 'tags')->findOrFail($id);
+    $emotions = Emotion::all(); // Fetch all emotions for selection (you must have a model called 'Emotion' to fetch all emotions)
+    $tags = Tag::all(); // Fetch all tags for selection
+    return view('diary.edit', compact('diaryEntry', 'emotions', 'tags'));
 }
 
     /**
@@ -64,16 +97,43 @@ class DiaryEntryController extends Controller
      */
     public function update(Request $request, string $id)
 {
-    // Retrieve the diary entry by its ID
-    $diaryEntry = Auth::user()->diaryEntries()->findOrFail($id);
+    // Validate the request
     $validated = $request->validate([
-        'date' => 'required|date',
-        'content' => 'required|string',
+        'date'      => ['required', 'date'],
+        'content'   => ['required', 'string'],
+        'emotions'  => ['nullable', 'array'],
+        'emotions.*'=> ['integer', 'exists:emotions,id'],
+        'intensity' => ['nullable', 'array'],
+        'tags'      => ['nullable', 'array'],
+        'tags.*'    => ['integer', 'exists:tags,id'],
     ]);
 
-    $diaryEntry->update($validated);
+    // Find and update the diary entry (only if it belongs to the logged-in user)
+    $diaryEntry = Auth::user()->diaryEntries()->findOrFail($id);
 
-    return redirect()->route('diary.index')->with('status', 'Diary entry updated successfully!');
+    $diaryEntry->update([
+        'date'    => $validated['date'],
+        'content' => $validated['content'],
+    ]);
+
+    //  Sync tags
+    $diaryEntry->tags()->sync($validated['tags'] ?? []);
+
+    //  Sync emotions + intensities
+    if (!empty($validated['emotions'])) {
+        $emotions = [];
+        foreach ($validated['emotions'] as $emotionId) {
+            $intensity = $validated['intensity'][$emotionId] ?? null;
+            $emotions[$emotionId] = ['intensity' => $intensity];
+        }
+        $diaryEntry->emotions()->sync($emotions);
+    } else {
+        $diaryEntry->emotions()->sync([]); // clear if none selected
+    }
+
+    return redirect()
+        ->route('diary.index')
+        ->with('status', 'Diary entry updated successfully!');
 }
 
     /**

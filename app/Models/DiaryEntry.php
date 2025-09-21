@@ -13,8 +13,21 @@ class DiaryEntry extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function emotions()
+    {
+        return $this->belongsToMany(Emotion::class, 'diary_entry_emotions', 'diary_entry_id', 'emotion_id')
+                    ->withPivot('intensity')
+                    ->withTimestamps();
+    }
+
+     public function tags()
+    {
+        return $this->morphToMany(Tag::class, 'taggable')->withTimestamps();
     }
 }

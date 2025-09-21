@@ -29,7 +29,7 @@
                     @endif
                     <!-- Social Links List -->
                     @foreach ($linkEntries as $entry)
-                        <div class="mb-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-md">
+                        <div class="mb-6 p-4 grid grid-row border-b-2 border-gray-200">
                              <!-- Platform Name -->
                                 <div class="flex flex-row items-center justify-between items-center">
                                     <span class="font-medium text-gray-900 dark:text-gray-100">
