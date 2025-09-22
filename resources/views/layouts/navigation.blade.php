@@ -24,10 +24,17 @@
                 <!-- REMINDER -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <!-- reminder -->
-                    <x-nav-link :href="route('reminder.index')" :active="request()->routeIs('reminder.index')"> 
+                    <x-nav-link :href="route('reminder.index')" :active="request()->routeIs('reminder.index')">
                         {{ __('Reminders') }}
                     </x-nav-link>
                 </div>
+                <!-- GET CONFLICT -->
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('getConflict')" :active="request()->routeIs('getConflict')">
+                        {{ __('Get Conflict') }}
+                    </x-nav-link>
+                </div>
+
             </div>
 
             <!-- Settings Dropdown -->
@@ -50,20 +57,20 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
                         <!-- Lab 2 media links -->
-                         <!-- <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                        <!-- <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('diary.index')" :active="request()->routeIs('diary.index')">
                         {{ __('Diary') }}
                     </x-nav-link>
                 </div> -->
-                         <x-dropdown-link :href="route('link.index')">
+                        <x-dropdown-link :href="route('link.index')">
                             {{ __('Links') }}
-                         </x-dropdown-link>
+                        </x-dropdown-link>
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 
                             <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
+                                onclick="event.preventDefault();
                                                 this.closest('form').submit();">
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
@@ -109,7 +116,7 @@
                     @csrf
 
                     <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
+                        onclick="event.preventDefault();
                                         this.closest('form').submit();">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>

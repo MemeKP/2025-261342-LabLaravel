@@ -26,6 +26,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('link', LinkEntryController::class);
     // Route to handle reminder
     Route::resource('reminder', ReminderController::class);
+    // Route for query Builder: Sad but happy
+    Route::get('/sad-but-happy', [DiaryEntryController::class, 'getConflict'])->name('getConflict');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/profile/photo/update', [UserController::class, 'updateProfilePhoto'])->name('profile.photo.update');
